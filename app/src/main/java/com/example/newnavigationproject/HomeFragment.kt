@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 class HomeFragment : Fragment() {
 
     lateinit var textViewButton : TextView
+    lateinit var sharedTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +34,24 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         textViewButton = view.findViewById(R.id.homeFragmentTextview)
+        sharedTextView = view.findViewById(R.id.homeFragmentSharedValue)
+        var repository = Repository("first")
+        var HomeFactory = MainViewModelFactory(repository)
+        val mainViewModel : MainViewModel by activityViewModels{
+            HomeFactory
+        }
+
+        sharedTextView.setOnClickListener {
+            mainViewModel.updateCount()
+        }
+
+        mainViewModel.count.observe(viewLifecycleOwner, {
+            sharedTextView.text = it.toString()
+        })
 
         textViewButton.setOnClickListener {
 
-            var person = Person("Abass", 38)
+            var person = Person("Explore Page", 38)
             val action = HomeFragmentDirections.actionHomeFragmentToExploreFragment("DevJava",70, person )
             findNavController().navigate(action)
         }
